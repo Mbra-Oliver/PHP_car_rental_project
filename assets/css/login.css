@@ -16,6 +16,15 @@ h1 {
   margin-top: 48px;
 }
 
+.links {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+}
+.link {
+  color: #15c39a;
+  text-decoration: none;
+}
 form {
   background: #fff;
   max-width: 360px;
