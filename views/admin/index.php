@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 <?php
 
 // session_start();
@@ -55,4 +53,5 @@
         </div>
 
 <?php include('./includes/footer.php') ?>
->>>>>>> Stashed changes
+
+
