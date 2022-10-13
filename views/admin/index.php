@@ -25,6 +25,8 @@
                         <a href="https://www.wrappixel.com/templates/ampleadmin/" target="_blank" class="btn btn-danger  d-none d-md-block pull-right ms-3 hidden-xs hidden-sm waves-effect waves-light text-white">Upgrade
                             to Pro</a>
                     </div>
+
+                    <a href="logout.php">Logout</a>
                 </div>
             </div>
             <!-- /.col-lg-12 -->

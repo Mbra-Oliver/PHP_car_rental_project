@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 
 include('./includes/header.php');
@@ -6,20 +6,25 @@ include('./includes/header.php');
 
 //Get brands :wrong way
 
-    require('../../configs/database.php');
+require('../../configs/database.php');
 
 
-    $brandQuery = $databaseConnexion->prepare('SELECT * FROM brands');
-    $brandQuery->execute();
+$brandQuery = $databaseConnexion->prepare('SELECT * FROM brands');
+$brandQuery->execute();
 
- ?>
+?>
 
 <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"> -->
 
 
 <style>
-    .row{
+    .row {
         margin-bottom: .5rem;
+    }
+
+    img {
+        width: 50px;
+
     }
 </style>
 
@@ -33,8 +38,16 @@ include('./includes/header.php');
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="carForm">
+            <form id="carForm" enctype="multipart/form-data">
                 <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="">Image</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="file" class="form-control" id="carPicture" name="carPicture">
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-4">
                             <label for="">Car Name</label>
@@ -49,14 +62,16 @@ include('./includes/header.php');
                         </div>
                         <div class="col-md-8">
                             <select name="brandId" id="brandId" class="form-control">
+
+                                <option value=""></option>
                                 <?php
 
-                                    foreach($brandQuery as $brand){?> 
-                                    <option value=""></option>
-                                    <option value="<?=$brand['id']?>"><?= $brand['name'] ?></option>
-                                    
-                                    <?php }
-                                
+                                foreach ($brandQuery as $brand) { ?>
+
+                                    <option value="<?= $brand['id'] ?>"><?= $brand['name'] ?></option>
+
+                                <?php }
+
                                 ?>
 
                             </select>
@@ -78,7 +93,7 @@ include('./includes/header.php');
                             <input type="text" class="form-control" id="dayPrice" name="dayPrice">
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-md-4">
                             <label for="">Month Price</label>
@@ -87,13 +102,14 @@ include('./includes/header.php');
                             <input type="text" class="form-control" id="monthPrice" name="monthPrice">
                         </div>
                     </div>
-                    
+
                 </div>
                 <div class="modal-footer">
                     <input type="hidden" name="car_id" id="car_id">
+                    <input type="hidden" name="hiden_image" id="hiden_image">
                     <input type="hidden" name="operation" id="operation">
                     <button type="submit" class="btn btn-primary" id="action_btn"></button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="closeModal" >Close</button>
                 </div>
             </form>
         </div>
@@ -129,6 +145,7 @@ include('./includes/header.php');
                     <table class="table table-striped" id="brandTable">
                         <thead>
                             <th>#</th>
+                            <th>Image</th>
                             <th>Car</th>
                             <th>Brand</th>
                             <th>Hour Price</th>
@@ -143,16 +160,7 @@ include('./includes/header.php');
             </div>
         </div>
     </div>
-    <!-- ============================================================== -->
-    <!-- End PAge Content -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Right sidebar -->
-    <!-- ============================================================== -->
-    <!-- .right-sidebar -->
-    <!-- ============================================================== -->
-    <!-- End Right sidebar -->
-    <!-- ============================================================== -->
+
 </div>
 
 <?php include('./includes/footer.php') ?>
@@ -169,7 +177,9 @@ include('./includes/header.php');
             "order": [],
             "ajax": {
                 url: "backend/m_cars.php",
-                data: {operation: 'FetchAll'},
+                data: {
+                    operation: 'FetchAll'
+                },
                 type: "POST",
             },
             "columnDefs": [{
@@ -186,6 +196,11 @@ include('./includes/header.php');
             $('#carModal').modal('show');
         });
 
+        $('#closeModal').click(function() {
+            $('#carModal').hide();
+            $('#carForm')[0].reset();
+        })
+
         //Manage the form : edit and store
 
         $(document).on('submit', '#carForm', (e) => {
@@ -197,6 +212,22 @@ include('./includes/header.php');
             var hourPrice = $('#hourPrice').val();
             var dayPrice = $('#dayPrice').val();
             var monthPrice = $('#monthPrice').val();
+
+            var carPicture = $('#carPicture').val()
+
+            if (carPicture != '') {
+
+                var extension = $('#carPicture').val().split('.').pop().toLowerCase();
+
+                if (extension != '') {
+                    if (jQuery.inArray(extension, ['gif', 'png', 'jpg']) == -1) {
+                        alert('The image format not supported');
+                        $('#carPicture').val('');
+                        return false;
+                    }
+                }
+            }
+
             if (carName != '' && brandId != '' && hourPrice != '' && dayPrice != '' && monthPrice != '') {
                 $.ajax({
                     url: 'backend/m_cars.php',
@@ -223,7 +254,7 @@ include('./includes/header.php');
                         }
                     }
                 })
-            }else{
+            } else {
                 showAlert('Error', 'All field are required', 'error', 'Try Again')
             }
         })
@@ -232,14 +263,14 @@ include('./includes/header.php');
         $(document).on('click', '.update', function() {
 
             var button = $(this)[0];
-            var brandId = $(button).attr('id')
+            var carId = $(button).attr('id')
 
             $.ajax({
-                url: 'backend/m_brands.php',
+                url: 'backend/m_cars.php',
                 method: 'POST',
                 data: {
                     operation: 'FetchSingle',
-                    brandId: brandId
+                    carId: carId
                 },
                 dataType: 'json',
                 success: (data) => {
@@ -247,10 +278,15 @@ include('./includes/header.php');
 
                     $('#modal_title').text('Edit Brand');
                     $('#action_btn').text('Submit for Edit');
-                    $('#brandName').val(data.name);
-                    $('#brand_id').val(data.id);
+                    $('#hiden_image').val(data.image);
+                    $('#carName').val(data.name);
+                    $('#hourPrice').val(data.hour_price);
+                    $('#dayPrice').val(data.day_price);
+                    $('#monthPrice').val(data.month_price);
+                    $('#car_id').val(data.id);
                     $('#operation').val('Edit');
                     $('#carModal').modal('show');
+
 
                 }
             })
@@ -259,18 +295,18 @@ include('./includes/header.php');
         $(document).on('click', '.delete', function() {
 
             var button = $(this)[0];
-            var brandId = $(button).attr('id')
+            var car_id = $(button).attr('id')
 
             $.ajax({
-                url: 'backend/m_brands.php',
+                url: 'backend/m_cars.php',
                 method: 'POST',
                 data: {
                     operation: 'DeleteSingle',
-                    brandId: brandId
+                    car_id: car_id
                 },
                 dataType: 'json',
                 success: (data) => {
-                    showAlert('Brand Deleted', 'Brand deleted successfully', 'error', 'Brand Deleted Close')
+                    showAlert('Car Deleted', 'Car deleted successfully', 'error', 'Car Deleted Close')
                     carDataTabale.ajax.reload()
                 }
             })

@@ -26,6 +26,8 @@ if (isset($_POST['operation'])) {
 
         $checkName = checkExist($databaseConnexion, 'cars', $carName, 'name');
 
+        $image = '';
+
         if ($checkName >= 1) {
             //brand already exist
 
@@ -36,8 +38,14 @@ if (isset($_POST['operation'])) {
                 'error_msg' => 'Car Name already taken'
             );
         } else {
-            $query = $databaseConnexion->prepare('INSERT INTO cars(name, brand_id, hour_price, day_price, month_price, available) VALUES(?, ?,?,?,?, ?)');
-            $query->execute(array($carName, $brandId, $hourPrice, $dayPrice, $monthPrice, false));
+
+            if ($_FILES['carPicture']['name'] != '') {
+
+                $image = upload();
+            }
+
+            $query = $databaseConnexion->prepare('INSERT INTO cars(image, name, brand_id, hour_price, day_price, month_price, available) VALUES(?, ?, ?,?,?,?, ?)');
+            $query->execute(array($image, $carName, $brandId, $hourPrice, $dayPrice, $monthPrice, false));
 
             if ($query) {
                 $output = array(
@@ -56,15 +64,19 @@ if (isset($_POST['operation'])) {
 
     if ($currentOperaion == 'FetchSingle') {
 
-        $brandid = $_POST['brandId'];
+        $car_id = $_POST['carId'];
 
-        $query = $databaseConnexion->prepare('SELECT * FROM brands Where id = ?');
-        $query->execute(array($brandid));
+        $query = $databaseConnexion->prepare('SELECT * FROM cars Where id = ?');
+        $query->execute(array($car_id));
 
         foreach ($query->fetchAll() as $result) {
             $output = array(
                 'id' => $result['id'],
+                'image' => $result['image'],
                 'name' => $result['name'],
+                'hour_price' => $result['hour_price'],
+                'day_price' => $result['day_price'],
+                'month_price' => $result['month_price'],
             );
         }
     }
@@ -91,20 +103,22 @@ if (isset($_POST['operation'])) {
         $filtered_rows = $statement->rowCount();
         foreach ($result as $row) {
 
-            if($row["available"] == 0){
-               $available = '<span class="btn btn-primary btn-xs">Available for booking</span>';
+            if ($row["available"] == 0) {
+                $available = '<span class="btn btn-primary btn-xs">Available for booking</span>';
             }
-            if($row["available"] == 1){
+            if ($row["available"] == 1) {
                 $available = '<span class="btn btn-warning btn-xs">In booking</span>';
             }
 
             $sub_array = array();
+
             $sub_array[] = $row["id"];
+            $sub_array[] = '<img src="./../../../assets/upload/' . $row['image'] . '" />';
             $sub_array[] = $row["name"];
             $sub_array[] = $row["brand"];
-            $sub_array[] = $row["hour_price"]." $";
-            $sub_array[] = $row["day_price"]." $";
-            $sub_array[] = $row["month_price"]." $";
+            $sub_array[] = $row["hour_price"] . " $";
+            $sub_array[] = $row["day_price"] . " $";
+            $sub_array[] = $row["month_price"] . " $";
             $sub_array[] = $available;
             $sub_array[] = '<button type="button" name="update" id="' . $row["id"] . '" class="btn btn-warning btn-xs update">Update</button>';
             $sub_array[] = '<button type="button" name="delete" id="' . $row["id"] . '" class="btn btn-danger btn-xs delete">Delete</button>';
@@ -120,22 +134,63 @@ if (isset($_POST['operation'])) {
 
     if ($currentOperaion == 'Edit') {
 
-        $query = $databaseConnexion->prepare('UPDATE brands SET name = ? WHERE id = ?');
-        $query->execute(array($_POST['brandName'], $_POST['brand_id']));
+        //Check if the user choose an new image
+
+
+        $oldImage = $_POST['hiden_image'];
+
+        if ($_FILES['carPicture']['name'] != '') {
+
+            $image = upload();
+
+            $removeQuery = unlink('./../../../assets/upload/' . $oldImage);
+        } else {
+            $image = $oldImage;
+        }
+
+        //remove old image
+
+
+
+
+        $query = $databaseConnexion->prepare('UPDATE cars SET image = ?, name = ?, brand_id = ?, hour_price=?, day_price=?, month_price= ? WHERE id = ?');
+
+        $query->execute(array($image, $_POST['carName'], $_POST['brandId'], $_POST['hourPrice'], $_POST['dayPrice'],  $_POST['monthPrice'],  $_POST['car_id']));
 
         if ($query) {
             $output = array(
                 'success' => true,
                 'error' => false,
-                'success_msg' => 'Brand Updated',
+                'success_msg' => 'Car Updated',
                 'error_msg' => ''
             );
         }
     }
 
     if ($currentOperaion == 'DeleteSingle') {
-        $query = $databaseConnexion->prepare('DELETE  FROM brands WHERE id = ?');
-        $query->execute(array($_POST['brandId']));
+
+        $image = '';
+
+        //Remove image from storage
+
+        $queryImage = $databaseConnexion->prepare('SELECT image from cars where id = ?');
+
+        $queryImage->execute(array($_POST['car_id']));
+
+        foreach ($queryImage as $res) {
+            $image = $res['image'];
+        }
+
+        if (!empty($image)) {
+            $Query = unlink('./../../../assets/upload/' . $image);
+        }
+
+        $query = $databaseConnexion->prepare('DELETE  FROM cars WHERE id = ?');
+
+        $query->execute(array($_POST['car_id']));
+
+
+
 
         $output = array(
             'success' => true
