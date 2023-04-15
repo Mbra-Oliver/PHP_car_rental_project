@@ -243,13 +243,14 @@ $brandQuery->execute();
                             showAlert('Success', data.success_msg, 'success', data.success_msg)
 
                             $('#carModal').modal('hide');
+                            $('#carForm')[0].reset();
                             carDataTabale.ajax.reload();
                         }
                         if (data.error) {
 
                             showAlert('Error', data.error_msg, 'error', data.error_msg)
 
-                            $('#carForm')[0].reset();
+                            // $('#carForm')[0].reset();
 
                         }
                     }

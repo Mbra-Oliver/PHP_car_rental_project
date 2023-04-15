@@ -138,6 +138,7 @@
                             showAlert('Success', data.success_msg, 'success', data.success_msg)
 
                             $('#brandModal').modal('hide');
+                            $('#brandForm')[0].reset();
                             brandDataTable.ajax.reload();
                         }
                         if (data.error) {

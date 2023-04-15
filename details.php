@@ -9,9 +9,26 @@ $singleCarQuery = $databaseConnexion->prepare('SELECT cars.*, brands.name as bra
 $singleCarQuery->execute(array($carId));
 
 
+$optionList = [
+    [
+        'id' => 1,
+        'libelle' => 'Hour'
+    ],
+    [
+        'id' => 2,
+        'libelle' => 'Day'
+    ],
+    [
+        'id' => 3,
+        'libelle' => 'Month'
+    ],
+];
+
 ?>
 
 
+
+<script src="./../assets/admins/plugins/bower_components/jquery/dist/jquery.min.js"></script>
 
 
 <div class="details-box">
@@ -26,9 +43,16 @@ $singleCarQuery->execute(array($carId));
 
             <?php
 
-            if ($result['available'] == 0) { ?>
-                <button>Book this car now</button>
+            if ($result['available'] == 0) {
+
+
+                if ($userLogged) {
+                    echo '<button>Book this car now</button>';
+                } else { ?>
+                    <div class="alert alert-warning">You need to log in for rent this card <a href="">Go to Login</a> </div>
             <?php }
+                // 
+            }
 
             ?>
 
@@ -37,9 +61,48 @@ $singleCarQuery->execute(array($carId));
     <?php } ?>
 </div>
 
+<select name="" id="test">
+    <?php foreach ($optionList as $option) { ?>
 
+        <option value="<?= $option['id'] ?>"><?= $option['libelle'] ?></option>
+
+    <?php }  ?>
+</select>
+
+
+<script>
+    $(document).ready(function() {
+        function getState(val) {
+
+            console.log(val)
+            $.ajax({
+                type: "POST",
+                url: "./ajax/get-country-state-ep.php",
+                data: 'country_id=' + val,
+                success: function(data) {
+                    $("#state-list").html(data);
+                    $("#loader").hide();
+                }
+            });
+        }
+
+        $('#test').on('change', function() {
+            console.log('value_change', this.value)
+
+            $.ajax({
+                type: "POST",
+                url: "./ajax/get-country-state-ep.php",
+                data: 'country_id=' + this.value,
+                success: function(data) {
+                    $("#state-list").html(data);
+                    $("#loader").hide();
+                }
+            });
+        })
+    })
+</script>
 <style>
-    .details-box{
+    .details-box {
         display: flex;
         gap: 1rem;
         margin: auto;
@@ -48,14 +111,16 @@ $singleCarQuery->execute(array($carId));
         width: 100%;
     }
 
-    .details-box .image-part{
+    .details-box .image-part {
         width: 30%;
         margin-left: 1rem;
     }
-    .details-box .image-part img{
+
+    .details-box .image-part img {
         width: 100%;
     }
-    .details-box .text-part{
+
+    .details-box .text-part {
         width: 68%;
     }
 </style>

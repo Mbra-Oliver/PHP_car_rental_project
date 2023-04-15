@@ -1,6 +1,14 @@
 <?php
-
+session_start();
 require('./configs/database.php');
+
+if (! empty($_SESSION["user_logged"])) {
+
+  $userLogged = false;
+} else {
+
+  $userLogged = true;
+}
 
 $fetchCars = $databaseConnexion->prepare('SELECT * FROM cars');
 $fetchCars->execute();
