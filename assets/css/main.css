@@ -1,0 +1,140 @@
+* {
+  font-family: "Raleway", sans-serif;
+}
+
+.navbar-light {
+  background-color: #002244 !important;
+  padding: 1rem;
+}
+
+.navbar-light .navbar-brand {
+  color: white;
+  text-transform: uppercase;
+}
+
+.navbar-light li a {
+  color: white !important;
+}
+
+/*
+*Navigation bar end heres
+*/
+
+.main-container {
+  margin-top: 3rem;
+}
+
+.grid_card {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid_card .grid_item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  margin-right: 1rem;
+  border-radius: 5px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+}
+
+.grid_image {
+  width: 100%;
+  height: 300px;
+  min-height: 300px;
+  border-radius: 5px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.details_image {
+  width: 70%;
+  height: 70%;
+  min-height: 500px;
+  border-radius: 5px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.grid_item h5 {
+  margin-top: 2rem !important;
+  margin-bottom: 1rem;
+}
+
+.grid_item a {
+  text-decoration: none;
+  font-size: 22px;
+}
+
+.link, .custom-btn-primary {
+  background-color: #002244;
+  padding: 1rem;
+  text-align: center;
+  border-radius: 2px;
+  width: 100%;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.link, .custom-btn-primary-bordered {
+  border:3px solid #002244;
+  background-color: white !important;
+  padding: 1rem;
+  text-align: center;
+  border-radius: 2px;
+  width: 100%;
+  color: #002244;
+  font-size: 18px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/*
+*Cars details
+*/
+
+.details-box {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 5rem !important;
+}
+
+.cars-description{
+  padding: 1rem;
+}
+
+.details-box .image-data-container {
+  width: 70%;
+  padding: 1rem;
+}
+
+.details-box .image-data-container .cars-libelle{
+  color: #002244 !important;
+  font-size: 30px;
+  font-weight: bold;
+  padding: 1rem;
+  text-transform: uppercase;
+}
+.details-box .image-data-container .details_image {
+  width: 100%;
+}
+.details-box .details-right-side {
+  width: 30%;
+  padding: 1rem;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+}
+
+.details-box .details-right-side .title {
+  font-size: 18px;
+  padding-bottom: 1rem;
+  font-weight: bold;
+  border-bottom: 4px solid #002244;
+}
+
+

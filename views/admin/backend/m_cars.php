@@ -45,7 +45,7 @@ if (isset($_POST['operation'])) {
             }
 
             $query = $databaseConnexion->prepare('INSERT INTO cars(image, name, brand_id, hour_price, day_price, month_price, available) VALUES(?, ?, ?,?,?,?, ?)');
-            $query->execute(array($image, $carName, $brandId, $hourPrice, $dayPrice, $monthPrice, false));
+            $query->execute(array($image, $carName, $brandId, $hourPrice, $dayPrice, $monthPrice, 0));
 
             if ($query) {
                 $output = array(
